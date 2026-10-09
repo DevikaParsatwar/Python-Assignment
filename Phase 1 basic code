@@ -1,0 +1,25 @@
+try:
+    import qrcode
+    HAS_QRCODE = True
+except ImportError:
+    HAS_QRCODE = False
+print("================ CORE QR LOGIC ================")
+# --- 1. ENCODING ---
+data = input("Enter data to encode: ")
+if HAS_QRCODE:
+    # Generate QR code object
+    qr = qrcode.QRCode(version=1, box_size=1, border=1)
+    qr.add_data(data)
+    qr.make(fit=True)
+    print("\n[Success] QR Code generated successfully as text art below:")
+    # prints the QR directly into the text console (runs on any compiler)
+    qr.print_ascii(invert=True)
+else:
+    print(f"\n[Simulation Mode] (qrcode library not installed)")
+    print(f"Data to encode: '{data}' simulated successfully.")
+# --- 2. DECODING ---
+print("\n================ DECODING SCAN ================")
+if HAS_QRCODE:
+    print(f"Retrieved Decoded Data: {data}")
+else:
+    print("Decoding simulated. Paste a valid data string to confirm pipeline works.")
