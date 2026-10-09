@@ -1,0 +1,70 @@
+import os
+try:
+    import qrcode
+    HAS_QRCODE = True
+except ImportError:
+    HAS_QRCODE = False
+try:
+    import cv2
+    HAS_CV2 = True
+except ImportError:
+    HAS_CV2 = False
+def menu():
+    while True:
+        print("\n=========================================")
+        print("          QR CODE ENCODER & DECODER      ")
+        print("=========================================")
+        print("1. Encode Data (Create QR)")
+        print("2. Decode Image File")
+        print("3. Check Environment Status")
+        print("4. Exit")        
+        choice = input("\nEnter choice (1-4): ").strip()        
+        if choice == '1':
+            encode_qr()
+        elif choice == '2':
+            decode_qr_file()
+        elif choice == '3':
+            check_environment()
+        elif choice == '4':
+            print("\nExiting program.")
+            break
+        else:
+            print("Invalid choice!")
+def encode_qr():
+    print("\n================ ENCODER ================")
+    data = input("Enter data (Text/URL): ")    
+    if not HAS_QRCODE:
+        print("\n[Notice] 'qrcode' library missing in this compiler.")
+        print(f"Mock Output: Data '{data}' packaged successfully.")
+        return
+    filename = "standard_qr.png"
+    try:
+        qr = qrcode.make(data)
+        qr.save(filename)
+        print(f"[Success] QR saved locally as '{filename}'")
+    except Exception as e:
+        print(f"[Environment Restriction] Could not write file to disk: {e}")
+def decode_qr_file():
+    print("\n================ DECODER ================")
+    if not HAS_CV2:
+        print("[Notice] 'opencv-python (cv2)' missing in this compiler.")
+        print("Simulation: Pipeline active, upload library to scan files.")
+        return
+    filename = input("Enter QR image filename: ").strip()
+    if not os.path.exists(filename):
+        print(f"File '{filename}' not found on this compiler's server filesystem.")
+        return
+    try:
+        img = cv2.imread(filename)
+        detector = cv2.QRCodeDetector()
+        data, _, _ = detector.detectAndDecode(img)
+        print(f"Decoded Result: {data}" if data else "No QR pattern found.")
+    except Exception as e:
+        print(f"Error reading image structure: {e}")
+def check_environment():
+    print("\n============== ENV STATUS ==============")
+    print(f"QR Generator Library (qrcode): {'AVAILABLE' if HAS_QRCODE else 'MISSING'}")
+    print(f"Image Processing Library (cv2): {'AVAILABLE' if HAS_CV2 else 'MISSING'}")
+    print("Tip: If running online, look for a 'Packages' tab to add them.")
+if __name__ == "__main__":
+    menu()
